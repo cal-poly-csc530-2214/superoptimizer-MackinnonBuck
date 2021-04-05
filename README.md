@@ -1,7 +1,7 @@
 ## Aha! x86 experimentation.
 
 ### Summary
-I decided to start by playing with Henry Warren's original "Aha!" implementation. I wanted to run some of the generated assembly on my machine, but this wasn't initially possible since the general-purpose RISC ISA that the original implementation uses is not the ISA that my computer's CPU runs (x86). The paper mentioned that it should be easy to port, so I though I would try doing an x86 port of "Aha!".
+I decided to start by playing with Henry Warren's original "Aha!" implementation. I wanted to run some of the generated assembly on my machine, but this wasn't initially possible since the general-purpose RISC ISA that the original implementation uses is not the ISA that my computer's CPU runs (x86). The paper mentioned that it should be easy to port, so I thought I would try doing an x86 port of "Aha!".
 
 ### Changes
 I started by modifying `aha.h`, adding/removing/reimplementing certain instructions to match the x86 ISA. This was a relatively small task since it amounted to mostly renaming instructions and adding new ones similar to those that already exist (like a right rotate). However, I quickly realized that a fundamental difference between x86 and the original ISA is that x86 uses the first operand as both a source and a destination. The original implementation seemed to make the assumption that the ISA being used would support each new instruction writing to a currently unused destination register, rather than the value of the first operand being used and overwritten with the result. Not to worry, there is a simple (albiet unoptimal) workaround: Move the first source operand into a new register, then use that new register as the first operand in the next instruction. For example:
